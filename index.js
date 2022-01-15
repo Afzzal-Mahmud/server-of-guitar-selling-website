@@ -32,14 +32,24 @@ async function run() {
             res.json(result)
         })
 
-        /* get all person review data to the database */
+        /* get all person review data from the database */
         app.get('/allreview',async(req,res) =>{
           const cursor = reviewCollection.find({})
           const allUserReview = await cursor.toArray()
           res.send(allUserReview)
         })
 
-        
+
+        /* collection for all unique guiitar */
+        const uniqueGuitarCollection = database.collection('unique_guitar_collection')
+
+         /* get unique-guitar collection data from the database */
+         app.get('/uniqueguitar',async(req,res) =>{
+          const cursor = uniqueGuitarCollection.find({})
+          const allUniqueGuitar = await cursor.toArray()
+          res.send(allUniqueGuitar)
+        })
+
     }
     finally{
         // await client.close()
