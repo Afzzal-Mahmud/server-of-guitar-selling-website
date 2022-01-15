@@ -50,6 +50,17 @@ async function run() {
           res.send(allUniqueGuitar)
         })
 
+
+        /* collection for all guiitar */
+        const allGuitarCollection = database.collection('all_guitar_collection')
+
+         /* get unique-guitar collection data from the database */
+         app.get('/allguitar',async(req,res) =>{
+          const cursor = allGuitarCollection.find({})
+          const allGuitar = await cursor.toArray()
+          res.send(allGuitar)
+        })
+
     }
     finally{
         // await client.close()
