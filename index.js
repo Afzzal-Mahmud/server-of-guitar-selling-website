@@ -61,6 +61,18 @@ async function run() {
           res.send(allGuitar)
         })
 
+        /* collection of all user_cart_data */
+        const allUserCartCollection = database.collection('all_user_cart_collection')
+
+        /* set each person review to the database */
+        app.post('/cart',async(req,res) =>{
+            const userCart = req.body
+            const result = await allUserCartCollection.insertOne(userCart)
+            console.log(result,"result from backend")
+            console.log(userCart)
+            res.json(result)
+        })
+
     }
     finally{
         // await client.close()
@@ -73,14 +85,6 @@ run().catch(console.dir)
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
-
-
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
-
 
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`)
