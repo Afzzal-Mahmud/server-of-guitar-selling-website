@@ -17,6 +17,29 @@ async function run() {
     try{
         await client.connect()
         console.log('database connet successfully')
+
+        const database = client.db('GuitarDb')
+
+        /* collection for all user review */
+        const reviewCollection = database.collection('user_review')
+
+        /* set each person review to the database */
+        app.post('/review',async(req,res) =>{
+            const userReview = req.body
+            const result = await reviewCollection.insertOne(userReview)
+            console.log(result,"result from backend")
+            console.log(userReview)
+            res.json(result)
+        })
+
+        /* get all person review data to the database */
+        app.get('/allreview',async(req,res) =>{
+          const cursor = reviewCollection.find({})
+          const allUserReview = await cursor.toArray()
+          res.send(allUserReview)
+        })
+
+        
     }
     finally{
         // await client.close()
