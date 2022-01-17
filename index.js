@@ -54,7 +54,7 @@ async function run() {
         /* collection for all guiitar */
         const allGuitarCollection = database.collection('all_guitar_collection')
 
-         /* get unique-guitar collection data from the database */
+         /* get all-guitar collection data from the database */
          app.get('/allguitar',async(req,res) =>{
           const cursor = allGuitarCollection.find({})
           const allGuitar = await cursor.toArray()
@@ -71,6 +71,17 @@ async function run() {
             console.log(result,"result from backend")
             console.log(userCart)
             res.json(result)
+        })
+
+        /* get cart data based on user Email */
+        app.get('/usercart',async(req,res) =>{
+          const email = req.query.email;
+          const query = {email : email}
+          const cursor = allUserCartCollection.find(query)
+          const result = await cursor.toArray()
+
+          console.log(result,'from email')
+          res.json(result)
         })
 
     }
