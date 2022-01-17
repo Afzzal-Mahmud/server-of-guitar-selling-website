@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb');
 const express = require('express')
+const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
@@ -16,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try{
         await client.connect()
-        console.log('database connet successfully')
+        console.log('database connected successfully')
 
         const database = client.db('GuitarDb')
 
@@ -68,19 +69,23 @@ async function run() {
         app.post('/cart',async(req,res) =>{
             const userCart = req.body
             const result = await allUserCartCollection.insertOne(userCart)
-            console.log(result,"result from backend")
-            console.log(userCart)
             res.json(result)
         })
 
         /* get cart data based on user Email */
-        app.get('/usercart',async(req,res) =>{
+        app.get('/usercart/',async(req,res) =>{
           const email = req.query.email;
           const query = {email : email}
           const cursor = allUserCartCollection.find(query)
           const result = await cursor.toArray()
+          res.json(result)
+        })
 
-          console.log(result,'from email')
+        /* delete a single item based on id */ 
+        app.delete('/usercart/:id',async(req,res) =>{
+          const id = req.params.id;
+          const query = {_id : ObjectId(id)}
+          const result = await allUserCartCollection.deleteOne(query)
           res.json(result)
         })
 
@@ -94,9 +99,9 @@ run().catch(console.dir)
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello from Guitar Selling website')
 })
 
 app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`)
+  console.log(`listening at port ${port}`)
 })
