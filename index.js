@@ -20,6 +20,25 @@ async function run() {
         console.log('database connected successfully')
 
         const database = client.db('GuitarDb')
+        /* create user collection */
+        const userCollection = database.collection('website_users')
+
+        app.post('/users',async(req,res) =>{
+          const user = req.body
+          const result =await userCollection.insertOne(user)
+          console.log(result)
+          res.json(result)
+        })
+
+        app.put('/users', async(req,res) =>{
+          const user = req.body;
+          const filter = {email : user.email}
+          const options = {upsert : true}
+          const updateDoc = {$set : user}
+          const result =await userCollection.updateOne(filter,updateDoc,options)
+          console.log(result)
+          res.json(result)
+        })
 
         /* collection for all user review */
         const reviewCollection = database.collection('user_review')
