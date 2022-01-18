@@ -81,6 +81,15 @@ async function run() {
           res.send(allGuitar)
         })
 
+        /* set guitar data to the database */
+        app.post('/insertguitar',async(req,res) =>{
+          const guitar = req.body
+          const result = await allGuitarCollection.insertOne(guitar)
+          console.log(result,"result from insert a guitar on explore page")
+          console.log(guitar)
+          res.json(result)
+      })
+
         /* collection of all user_cart_data */
         const allUserCartCollection = database.collection('all_user_cart_collection')
 
