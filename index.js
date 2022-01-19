@@ -49,6 +49,19 @@ async function run() {
           res.json(result)
         })
 
+        /* checking is a user is admin or not . Do not use to much like get,post,put on same route .try defrent one */
+        app.get('/useradmin/:email', async(req,res) =>{
+          const email = req.params.email;
+          console.log(email,'from checking purpose')
+          const query = {email : email}
+          const user = await userCollection.find(query)
+          if(user.role === 'admin'){
+            res.json({admin : true})
+          }else{
+            res.json({admin : false})
+          }
+        })
+
         /* collection for all user review */
         const reviewCollection = database.collection('user_review')
 
@@ -110,7 +123,7 @@ async function run() {
         })
 
         /* get cart data based on user Email */
-        app.get('/usercart/',async(req,res) =>{
+        app.get('/usercart',async(req,res) =>{
           const email = req.query.email;
           const query = {email : email}
           const cursor = allUserCartCollection.find(query)
