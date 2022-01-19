@@ -52,9 +52,8 @@ async function run() {
         /* checking is a user is admin or not . Do not use to much like get,post,put on same route .try defrent one */
         app.get('/useradmin/:email', async(req,res) =>{
           const email = req.params.email;
-          console.log(email,'from checking purpose')
           const query = {email : email}
-          const user = await userCollection.find(query)
+          const user = await userCollection.findOne(query)
           if(user.role === 'admin'){
             res.json({admin : true})
           }else{
