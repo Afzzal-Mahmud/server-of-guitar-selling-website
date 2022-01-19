@@ -40,6 +40,15 @@ async function run() {
           res.json(result)
         })
 
+        /* make a user admin */
+        app.put('/users/admin', async(req,res) => {
+          const user = req.body;
+          const filter = {email : user.email}
+          const updateDoc = {$set : {role: 'admin'}}
+          const result = await userCollection.updateOne(filter,updateDoc)
+          res.json(result)
+        })
+
         /* collection for all user review */
         const reviewCollection = database.collection('user_review')
 
