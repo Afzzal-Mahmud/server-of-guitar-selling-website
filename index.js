@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 const express = require('express')
 const ObjectId = require('mongodb').ObjectId;
+const admin = require("firebase-admin");
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
@@ -9,6 +10,32 @@ const port = process.env.PORT || 5000
 const cors = require('cors')
 app.use(cors())
 app.use(express.json())
+
+/* connect to firebase */
+const serviceAccount = JSON.parse(process.env.FIREBASE_ACCOUNT);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
+
+/* varify token */
+async function verifyToken(req, res, next) {
+  if (req.headers?.authorization?.startsWith('Bearer ')) {
+      const token = req.headers.authorization.split(' ')[1];
+
+      try {
+          const decodedUser = await admin.auth().verifyIdToken(token);
+          req.decodedEmail = decodedUser.email;
+      }
+      catch {
+
+      }
+  }
+  next();
+}
+
 
 /* database data */
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qzjm0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -41,12 +68,22 @@ async function run() {
         })
 
         /* make a user admin */
-        app.put('/users/admin', async(req,res) => {
+        app.put('/users/admin',verifyToken, async(req,res) => {
           const user = req.body;
-          const filter = {email : user.email}
-          const updateDoc = {$set : {role: 'admin'}}
-          const result = await userCollection.updateOne(filter,updateDoc)
-          res.json(result)
+          const requester = req.decodedEmail
+
+          if(requester){
+            const requesterAccount =await userCollection.findOne({email : require})
+              if(requesterAccount.role ==='admin'){
+                const filter = {email : user.email}
+                const updateDoc = {$set : {role: 'admin'}}
+                const result = await userCollection.updateOne(filter,updateDoc)
+                res.json(result)
+              }
+          }
+          else{
+              res.status(403).json({message : 'You do not have access to make admin'})
+          }
         })
 
         /* checking is a user is admin or not . Do not use to much like get,post,put on same route .try defrent one */
