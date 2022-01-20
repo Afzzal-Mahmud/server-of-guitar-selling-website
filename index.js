@@ -63,7 +63,6 @@ async function run() {
           const options = {upsert : true}
           const updateDoc = {$set : user}
           const result =await userCollection.updateOne(filter,updateDoc,options)
-          console.log(result)
           res.json(result)
         })
 
@@ -105,8 +104,6 @@ async function run() {
         app.post('/review',async(req,res) =>{
             const userReview = req.body
             const result = await reviewCollection.insertOne(userReview)
-            console.log(result,"result from backend")
-            console.log(userReview)
             res.json(result)
         })
 
@@ -174,6 +171,23 @@ async function run() {
           const result = await allUserCartCollection.updateMany(filter,updateDoc)
           res.json(result)
         })
+
+        /* load allUser data on admin pannel */
+        app.get('/allusercartdata', async(req,res) =>{
+          const cursor = allUserCartCollection.find({})
+          const allUserData = await cursor.toArray()
+          res.send(allUserData)
+        })
+
+        // /* update user cart status */
+        // app.put('/usercart/updatestatus',async(req,res) =>{
+        //   const user = req?.body
+        //   const filter = {email : user.userEmail}
+        //   const options = {upsert : true}
+        //   const updateDoc = {$set : {status: 'successfull'}}
+        //   const result = await allUserCartCollection.updateMany(filter,updateDoc,options)
+        //   res.json(result)
+        // })
 
         /* delete a single item based on id */ 
         app.delete('/usercart/:id',async(req,res) =>{
