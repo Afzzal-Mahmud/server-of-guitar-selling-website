@@ -143,8 +143,7 @@ async function run() {
         app.post('/insertguitar',async(req,res) =>{
           const guitar = req.body
           const result = await allGuitarCollection.insertOne(guitar)
-          console.log(result,"result from insert a guitar on explore page")
-          console.log(guitar)
+          // console.log(guitar)
           res.json(result)
       })
 
@@ -164,6 +163,15 @@ async function run() {
           const query = {email : email}
           const cursor = allUserCartCollection.find(query)
           const result = await cursor.toArray()
+          res.json(result)
+        })
+
+        /* update all user cart collection when click procced */
+        app.put('/usercart/update',async(req,res) =>{
+          const user = req?.body
+          const filter = {email : user.userEmail}
+          const updateDoc = {$set : {status: 'pending'}}
+          const result = await allUserCartCollection.updateMany(filter,updateDoc)
           res.json(result)
         })
 
